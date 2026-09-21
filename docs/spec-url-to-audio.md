@@ -38,14 +38,14 @@
 - 默认输出格式：`auto` → m4a 原样复制（零重编码）；`-f` 可选 `mp3|flac|alac|wav`。无损格式为显式选项，对有损源只改容器。见 ADR-0001。
 - 默认格式选择依据（保真策略）：对 AAC/m4a 源，`-f "ba/b"` + remux 即为最优保真路径；不默认转 flac/wav。
 - 输出目录：默认 `~/Desktop`，脚本 `mkdir -p` 并探测 TCC（写权限）；写不进自动回退 `~/Downloads` 并告知实际落盘位置；`-o <dir>` 可显式覆盖。
-- 分P/合集：默认 `--no-playlist`，只取链接指向的 P；用户显式要求全集时才 `-p N` 或去掉 `--no-playlist`。
+- 分P/合集：默认 `--no-playlist`，只取链接指向的 P；用户显式要求时才 `-p N`（第 N 个 P）或 `-p all`（整个合集，内部去掉 `--no-playlist`）。
 - 登录态鉴权（见 ADR-0002，覆盖原「默认不读 cookie」红线）：
   - 默认 `-b chrome`：读 Chrome 登录态提音质；读不到/失效时自动匿名回退继续抓取。
   - 其他浏览器由用户显式传 `-b safari|firefox` 等。
   - `-c <cookiefile>` 支持 Netscape 格式 cookie 文件，用于不想暴露浏览器或无头场景。
-  - 失败判定：cookie/登录相关错误 → 匿名重试；TCC/权限错误 → 回退 `~/Downloads` 重试；其余 → 原样回传错误。
+  - 失败判定：cookie/登录相关错误 → 匿名重试；TCC/权限错误 → 回退 `~/Downloads` 重试（仅限默认输出目录；用户显式 `-o` 指定的目录不可写时直接报错 exit 2，不擅自改路径）；其余 → 原样回传错误。
 - 进度可见性：`--no-progress` 静默执行；完成才回传结果摘要，失败给失败信息。
-- 结果回传：输出 `### 提取结果 ###` 块含 `outdir / title / duration / format`，供 agent 复用。
+- 结果回传：输出 `### 提取结果 ###` 块含 `outdir / file / files / title / duration / format`（`file` 为实际落盘的绝对路径，`files` 为文件个数，供合集模式使用），供 agent 复用。
 - 依赖处理：探测 `yt-dlp`/`ffmpeg`，缺失即打印 `brew install` 提示并 exit 127，绝不自动安装。
 - 安全与隐私：默认读 Chrome 登录态获取；读取仅本机 cookie 供 yt-dlp 使用，不外传；不写入任何 token/账号信息到 skill 或脚本。
 
