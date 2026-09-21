@@ -1,0 +1,7 @@
+interface:
+  display_name: "Video URL to Audio"
+  short_description: "Extract audio from a video link into a local file"
+  default_prompt: "Use $url-to-audio to extract the audio from this video link."
+
+policy:
+  allow_implicit_invocation: true
